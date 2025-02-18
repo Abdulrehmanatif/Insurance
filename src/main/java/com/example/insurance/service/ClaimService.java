@@ -12,6 +12,6 @@ public interface ClaimService {
 
     public ApiResponse deleteClaim(Integer claimId);
 
-    public ApiResponse getAllClaims(Integer customerId);
+    public ApiResponse getAllClaims(Integer customerId) throws Exception;
 
 }

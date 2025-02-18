@@ -34,33 +34,52 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ApiResponse addCustomer(AddCustomerRequestDTO request) {
         Customer customer = new Customer();
-        customer.setFullName(request.getFullName());
-        customer.setBirthDate(request.getBirthDate());
+        if (request.getFullName() != null && !request.getFullName().trim().isEmpty()) {
+            customer.setFullName(request.getFullName());
+        } else {
+            throw new IllegalArgumentException("Full name cannot be null or empty");
+        }
+        if (request.getBirthDate() != null) {
+            customer.setBirthDate(request.getBirthDate());
+        } else {
+            throw new IllegalArgumentException("Birth date cannot be null");
+        }
         customer = customerRepository.save(customer);
 
-        for(Integer i : request.getInsuranceTypes()){
-            CustomerInsurance customerInsurance = new CustomerInsurance();
-            customerInsurance.setCustomerId(customer.getCustomerId());
-            customerInsurance.setInsuranceId(i);
-            customerInsuranceRepository.save(customerInsurance);
+        if (request.getInsuranceTypes() != null && !request.getInsuranceTypes().isEmpty()) {
+            for (Integer i : request.getInsuranceTypes()) {
+                if (i == null) {
+                    throw new IllegalArgumentException("Insurance type ID cannot be null");
+                }
+                CustomerInsurance customerInsurance = new CustomerInsurance();
+                customerInsurance.setCustomerId(customer.getCustomerId());
+                customerInsurance.setInsuranceId(i);
+                customerInsuranceRepository.save(customerInsurance);
+            }
+        } else {
+            throw new IllegalArgumentException("At least one insurance type must be provided");
         }
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, null);
     }
 
     @Override
-    public ApiResponse getCustomerInfo( Integer customerId) {
+    public ApiResponse getCustomerInfo( Integer customerId) throws Exception {
         Customer customer = customerRepository.findById(customerId).get();
         CustomerResponseDTO response = new CustomerResponseDTO();
-        response.setCustomerId(customer.getCustomerId());
-        response.setFullName(customer.getFullName());
-        response.setBirthDate(customer.getBirthDate());
-        List<CustomerInsurance> customerInsurance = customerInsuranceRepository.findAllByCustomerId(customerId);
-        List<String> insuranceTypeList = new ArrayList<>();
-        for(CustomerInsurance customerInsurance1 : customerInsurance){
-            InsuranceType insuranceType = insuranceTypeRepository.findById(customerInsurance1.getInsuranceId()).get();
-            insuranceTypeList.add(insuranceType.getInsuranceTypeName());
+        if(customer != null) {
+            response.setCustomerId(customer.getCustomerId());
+            response.setFullName(customer.getFullName());
+            response.setBirthDate(customer.getBirthDate());
+            List<CustomerInsurance> customerInsurance = customerInsuranceRepository.findAllByCustomerId(customerId);
+            List<String> insuranceTypeList = new ArrayList<>();
+            for (CustomerInsurance customerInsurance1 : customerInsurance) {
+                InsuranceType insuranceType = insuranceTypeRepository.findById(customerInsurance1.getInsuranceId()).get();
+                insuranceTypeList.add(insuranceType.getInsuranceTypeName());
+            }
+            response.setInsuranceTypes(insuranceTypeList);
+        }else {
+            throw new Exception("Customer Not Found!");
         }
-        response.setInsuranceTypes(insuranceTypeList);
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE,response);
     }
 }

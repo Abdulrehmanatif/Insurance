@@ -35,42 +35,64 @@ public class ClaimServiceImpl implements ClaimService {
     @Override
     public ApiResponse addClaim(AddClaimRequestDTO request) {
         Claim claim = new Claim();
-        claim.setClaimAmount(request.getClaimAmount());
+        if (request.getClaimAmount() != null) {
+            claim.setClaimAmount(request.getClaimAmount());
+        } else {
+            throw new IllegalArgumentException("Claim amount cannot be null");
+        }
         claim.setClaimDate(new Date());
-        claim.setClaimStatus(request.getClaimStatus());
-        claim.setClaimType(request.getClaimType());
-        claim.setCustomerId(request.getCustomerId());
+        if (request.getClaimStatus() != null) {
+            claim.setClaimStatus(request.getClaimStatus());
+        } else {
+            throw new IllegalArgumentException("Claim status cannot be null");
+        }
+        if (request.getClaimType() != null) {
+            claim.setClaimType(request.getClaimType());
+        } else {
+            throw new IllegalArgumentException("Claim type cannot be null");
+        }
+        if (request.getCustomerId() != null) {
+            claim.setCustomerId(request.getCustomerId());
+        } else {
+            throw new IllegalArgumentException("Customer ID cannot be null");
+        }
         claimRepository.save(claim);
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, null);
     }
 
     @Override
     public ApiResponse updateClaimStatus(Integer claimId, Integer status) {
-        claimRepository.updateClaimStatus(claimId, status);
+        if(claimId != null && status != null) { claimRepository.updateClaimStatus(claimId, status); }
+        else { throw new IllegalArgumentException("Claim ID or status cannot be null"); }
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, null);
     }
 
     @Override
     public ApiResponse deleteClaim(Integer claimId) {
-        claimRepository.deleteByClaimId(claimId);
+        if(claimId != null){ claimRepository.deleteByClaimId(claimId); }
+        else{ throw new IllegalArgumentException("Claim ID cannot be null"); }
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, null);
     }
 
     @Override
-    public ApiResponse getAllClaims(Integer customerId) {
+    public ApiResponse getAllClaims(Integer customerId) throws Exception {
         List<Claim> claims = claimRepository.findAllByCustomerId(customerId);
         List<ClaimResponseDTO> response = new ArrayList<>();
-        for(Claim claim : claims) {
-            ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
-            claimResponseDTO.setClaimId(claim.getClaimId());
-            claimResponseDTO.setClaimAmount(claim.getClaimAmount().toString());
-            claimResponseDTO.setClaimDate(claim.getClaimDate());
-            claimResponseDTO.setCustomerId(claim.getCustomerId());
-            ClaimStatus claimStatus = claimStatusRepository.findById(claim.getClaimStatus()).get();
-            claimResponseDTO.setClaimStatus(claimStatus.getStatusDescription());
-            InsuranceType insuranceType = insuranceTypeRepository.findById(claim.getClaimType()).get();
-            claimResponseDTO.setClaimType(insuranceType.getInsuranceTypeName());
-            response.add(claimResponseDTO);
+        if(!claims.isEmpty()) {
+            for (Claim claim : claims) {
+                ClaimResponseDTO claimResponseDTO = new ClaimResponseDTO();
+                claimResponseDTO.setClaimId(claim.getClaimId());
+                claimResponseDTO.setClaimAmount(claim.getClaimAmount().toString());
+                claimResponseDTO.setClaimDate(claim.getClaimDate());
+                claimResponseDTO.setCustomerId(claim.getCustomerId());
+                ClaimStatus claimStatus = claimStatusRepository.findById(claim.getClaimStatus()).get();
+                claimResponseDTO.setClaimStatus(claimStatus.getStatusDescription());
+                InsuranceType insuranceType = insuranceTypeRepository.findById(claim.getClaimType()).get();
+                claimResponseDTO.setClaimType(insuranceType.getInsuranceTypeName());
+                response.add(claimResponseDTO);
+            }
+        }else {
+            throw new Exception("Claims Not Found!");
         }
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, response);
     }

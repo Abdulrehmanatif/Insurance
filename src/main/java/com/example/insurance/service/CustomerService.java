@@ -8,6 +8,6 @@ public interface CustomerService {
 
     public ApiResponse addCustomer(AddCustomerRequestDTO request);
 
-    public ApiResponse getCustomerInfo(Integer customerId);
+    public ApiResponse getCustomerInfo(Integer customerId) throws Exception;
 
 }
