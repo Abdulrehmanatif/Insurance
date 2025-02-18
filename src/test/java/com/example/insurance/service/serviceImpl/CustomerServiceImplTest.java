@@ -1,13 +1,10 @@
 package com.example.insurance.service.serviceImpl;
 
 import com.example.insurance.dto.AddCustomerRequestDTO;
-import com.example.insurance.dto.CustomerResponseDTO;
 import com.example.insurance.entity.Customer;
 import com.example.insurance.entity.CustomerInsurance;
-import com.example.insurance.entity.InsuranceType;
 import com.example.insurance.repository.CustomerInsuranceRepository;
 import com.example.insurance.repository.CustomerRepository;
-import com.example.insurance.repository.InsuranceTypeRepository;
 import com.example.insurance.utils.ApiResponse;
 import com.example.insurance.utils.Constants;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,13 +31,10 @@ class CustomerServiceImplTest {
     @Mock
     private CustomerInsuranceRepository customerInsuranceRepository;
 
-    @Mock
-    private InsuranceTypeRepository insuranceTypeRepository;
 
     private Customer customer;
     private AddCustomerRequestDTO requestDTO;
     private CustomerInsurance customerInsurance;
-    private InsuranceType insuranceType;
 
     @BeforeEach
     void setUp() {
