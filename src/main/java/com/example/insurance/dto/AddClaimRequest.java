@@ -1,17 +1,12 @@
 package com.example.insurance.dto;
 
-
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-
 @Data
-public class AddClaimRequestDTO {
+public class AddClaimRequest {
 
     @NotNull(message = "Customer ID cannot be null")
     private Integer customerId;

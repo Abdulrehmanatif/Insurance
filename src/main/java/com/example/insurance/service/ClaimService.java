@@ -1,17 +1,19 @@
 package com.example.insurance.service;
 
-import com.example.insurance.dto.AddClaimRequestDTO;
+import com.example.insurance.dto.AddClaimRequest;
+import com.example.insurance.dto.ClaimResponse;
 import com.example.insurance.utils.ApiResponse;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public interface ClaimService {
 
-    public ApiResponse addClaim(AddClaimRequestDTO request);
+    public ClaimResponse addClaim(AddClaimRequest request);
 
     public ApiResponse updateClaimStatus(Integer claimId, Integer status);
 
     public ApiResponse deleteClaim(Integer claimId);
 
-    public ApiResponse getAllClaims(Integer customerId) throws Exception;
+    public List<ClaimResponse> getAllClaims(Integer customerId);
 
 }

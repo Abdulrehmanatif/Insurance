@@ -1,21 +1,14 @@
 package com.example.insurance.dto;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
-public class CustomerResponseDTO {
-
+public class CustomerResponse {
     private Integer customerId;
-
     private String fullName;
-
-    private List<String> insuranceTypes;
-
+    private String insuranceTypes;
     private Date birthDate;
 }
