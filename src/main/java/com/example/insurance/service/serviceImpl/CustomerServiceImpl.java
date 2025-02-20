@@ -16,20 +16,26 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
-
     private final CustomerRepository customerRepository;
-
     private final CustomerMapper customerMapper;
 
     @Override
     public CustomerResponse addCustomer(AddCustomerRequest request) {
-        return customerMapper.toCustomerResponseDTO(customerRepository.save(customerMapper.toCustomerEntity(request)));
+        log.info("Adding new customer: {}", request);
+        Customer savedCustomer = customerRepository.save(customerMapper.toCustomerEntity(request));
+        log.info("Customer added successfully with ID: {}", savedCustomer.getCustomerId());
+        return customerMapper.toCustomerResponseDTO(savedCustomer);
     }
 
-
     @Override
-    public CustomerResponse getCustomerInfo( Integer customerId) {
-        return customerMapper.toCustomerResponseDTO(customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not Found")));
+    public CustomerResponse getCustomerInfo(Integer customerId) {
+        log.info("Fetching customer info for ID: {}", customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> {
+                    log.error("Customer with ID {} not found", customerId);
+                    return new CustomerNotFoundException("Customer not Found");
+                });
+        log.info("Customer found: {}", customer);
+        return customerMapper.toCustomerResponseDTO(customer);
     }
 }

@@ -35,6 +35,15 @@ public class Claim {
     @Column(name = "CLAIM_AMOUNT", nullable = false)
     private BigDecimal claimAmount;
 
+    public Claim(Integer claimId, Integer customerId, Integer claimType, Date date, Integer claimStatus, BigDecimal bigDecimal) {
+        this.claimId = claimId;
+        this.customerId = customerId;
+        this.claimType = claimType;
+        this.claimDate = date;
+        this.claimStatus = claimStatus;
+        this.claimAmount = bigDecimal;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

@@ -12,10 +12,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -26,27 +23,37 @@ public class ClaimServiceImpl implements ClaimService {
 
     @Override
     public ClaimResponse addClaim(AddClaimRequest request) {
-        return claimMapper.toClaimResponseDTO(claimRepository.save(claimMapper.toClaim(request)));
+        log.info("Adding new claim: {}", request);
+        var response = claimMapper.toClaimResponseDTO(claimRepository.save(claimMapper.toClaim(request)));
+        log.info("Claim added successfully");
+        return response;
     }
 
     @Override
     public ApiResponse updateClaimStatus(@NonNull Integer claimId, @NonNull Integer status) {
+        log.info("Updating claim status for claimId: {} to status: {}", claimId, status);
         claimRepository.updateClaimStatus(claimId, status);
+        log.info("Claim status updated successfully for claimId: {}", claimId);
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE);
     }
-
 
     @Override
     public ApiResponse deleteClaim(@NonNull Integer claimId) {
+        log.info("Deleting claim with ID: {}", claimId);
         claimRepository.deleteByClaimId(claimId);
+        log.info("Claim deleted successfully with ID: {}", claimId);
         return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE);
     }
 
-
     @Override
     public List<ClaimResponse> getAllClaims(Integer customerId) {
-        return claimMapper.toClaimResponseDTOList(Optional.of(claimRepository.findAllByCustomerId(customerId))
-                .filter(list -> !list.isEmpty())
-                .orElseThrow(() -> new ClaimsNotFoundException("Claims not found")));
+        log.info("Fetching all claims for customerId: {}", customerId);
+        var claims = claimRepository.findAllByCustomerId(customerId);
+        if (claims.isEmpty()) {
+            log.warn("No claims found for customerId: {}", customerId);
+            throw new ClaimsNotFoundException("Claims not found");
+        }
+        log.info("Retrieved {} claims for customerId: {}", claims.size(), customerId);
+        return claimMapper.toClaimResponseDTOList(claims);
     }
 }

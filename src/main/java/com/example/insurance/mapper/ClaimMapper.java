@@ -35,18 +35,6 @@ public class ClaimMapper {
         return responseDTO;
     }
 
-    public ClaimResponse toClaimResponse(Claim claim) {
-        ClaimResponse responseDTO = new ClaimResponse();
-        responseDTO.setClaimId(claim.getClaimId());
-        responseDTO.setCustomerId(claim.getCustomerId());
-        responseDTO.setClaimAmount(claim.getClaimAmount().toString());
-        responseDTO.setClaimDate(claim.getClaimDate());
-        responseDTO.setClaimType(Constants.InsuranceTypeEnum.getDescriptionById(claim.getClaimType()));
-        responseDTO.setClaimStatus(Constants.ClaimStatusEnum.getDescriptionById(claim.getClaimStatus()));
-
-        return responseDTO;
-    }
-
     public List<ClaimResponse> toClaimResponseDTOList(List<Claim> claims) {
         return claims.stream()
                 .map(this::toClaimResponseDTO)

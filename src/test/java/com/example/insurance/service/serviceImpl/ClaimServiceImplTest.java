@@ -1,9 +1,12 @@
 //package com.example.insurance.service.serviceImpl;
 //
-//import com.example.insurance.dto.AddClaimRequestDTO;
-//import com.example.insurance.dto.ClaimResponseDTO;
+//import com.example.insurance.dto.AddClaimRequest;
+//import com.example.insurance.dto.ClaimResponse;
 //import com.example.insurance.entity.Claim;
+//import com.example.insurance.exception.ClaimsNotFoundException;
+//import com.example.insurance.mapper.ClaimMapper;
 //import com.example.insurance.repository.ClaimRepository;
+//import com.example.insurance.service.serviceImpl.ClaimServiceImpl;
 //import com.example.insurance.utils.ApiResponse;
 //import com.example.insurance.utils.Constants;
 //import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +14,7 @@
 //import org.junit.jupiter.api.extension.ExtendWith;
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;
+//import org.mockito.MockitoAnnotations;
 //import org.mockito.junit.jupiter.MockitoExtension;
 //
 //import java.math.BigDecimal;
@@ -22,65 +26,55 @@
 //@ExtendWith(MockitoExtension.class)
 //class ClaimServiceImplTest {
 //
-//    @InjectMocks
-//    private ClaimServiceImpl claimService;
-//
 //    @Mock
 //    private ClaimRepository claimRepository;
 //
-//    private Claim claim;
-//    private AddClaimRequestDTO requestDTO;
+//    @Mock
+//    private ClaimMapper claimMapper;
+//
+//    @InjectMocks
+//    private ClaimServiceImpl claimService;
 //
 //    @BeforeEach
 //    void setUp() {
-//        claim = new Claim();
-//        claim.setClaimId(1);
-//        claim.setCustomerId(100);
-//        claim.setClaimAmount(new BigDecimal("5000"));
-//        claim.setClaimDate(new Date());
-//        claim.setClaimStatus(1);
-//        claim.setClaimType(2);
-//        requestDTO = new AddClaimRequestDTO();
-//        requestDTO.setCustomerId(100);
-//        requestDTO.setClaimAmount(new BigDecimal("5000"));
-//        requestDTO.setClaimStatus(1);
-//        requestDTO.setClaimType(2);
+//        MockitoAnnotations.openMocks(this);
 //    }
 //
 //    @Test
 //    void testAddClaim() {
-//        when(claimRepository.save(any(Claim.class))).thenReturn(claim);
-//        ApiResponse response = claimService.addClaim(requestDTO);
-//        assertEquals(Constants.SUCCESS_CODE, response.getStatus());
-//        assertEquals(Constants.SUCCESS_MESSAGE, response.getMessage());
+//        Claim claim = claimRepository.save(new Claim(1, 1, 1, new Date(), 1, BigDecimal.valueOf(10000)));
+//        ClaimResponse response = claimMapper.toClaimResponseDTO(claim);
 //        verify(claimRepository, times(1)).save(any(Claim.class));
+//        verify(claimMapper, times(1)).toClaimResponseDTO(any(Claim.class));
 //    }
 //
 //    @Test
 //    void testUpdateClaimStatus() {
-//        doNothing().when(claimRepository).updateClaimStatus(1, 2);
-//        ApiResponse response = claimService.updateClaimStatus(1, 2);
-//        assertEquals(Constants.SUCCESS_CODE, response.getStatus());
-//        assertEquals(Constants.SUCCESS_MESSAGE, response.getMessage());
-//        verify(claimRepository, times(1)).updateClaimStatus(1, 2);
+//        Integer claimId = 1;
+//        Integer status = 2;
+//        doNothing().when(claimRepository).updateClaimStatus(claimId, status);
+//        claimRepository.updateClaimStatus(claimId, status);
+//        verify(claimRepository, times(1)).updateClaimStatus(claimId, status);
 //    }
 //
 //    @Test
 //    void testDeleteClaim() {
-//        doNothing().when(claimRepository).deleteByClaimId(1);
-//        ApiResponse response = claimService.deleteClaim(1);
-//        assertEquals(Constants.SUCCESS_CODE, response.getStatus());
-//        assertEquals(Constants.SUCCESS_MESSAGE, response.getMessage());
-//        verify(claimRepository, times(1)).deleteByClaimId(1);
+//        Integer claimId = 1;
+//        doNothing().when(claimRepository).deleteByClaimId(claimId);
+//        claimRepository.deleteByClaimId(claimId);
+//        verify(claimRepository, times(1)).deleteByClaimId(claimId);
 //    }
 //
 //    @Test
-//    void testGetAllClaims() throws Exception {
-//        when(claimRepository.findAllByCustomerId(100)).thenReturn(Collections.singletonList(claim));
-//        ApiResponse response = claimService.getAllClaims(100);
-//        List<ClaimResponseDTO> responseDTOs = (List<ClaimResponseDTO>) response.getData();
-//        assertEquals(Constants.SUCCESS_CODE, response.getStatus());
-//        assertEquals(1, responseDTOs.size());
-//        verify(claimRepository, times(1)).findAllByCustomerId(100);
+//    void testGetAllClaims_Success() {
+//        Integer customerId = 1;
+//        List<Claim> claims = claimRepository.findAllByCustomerId(customerId);
+//        List<ClaimResponse> result = claimService.getAllClaims(customerId);
+//        when(claimRepository.findAllByCustomerId(customerId)).thenReturn(claims);
+//        when(claimMapper.toClaimResponseDTOList(claims)).thenReturn(result);
+//        assertNotNull(result);
+//        assertEquals(1, result.size());
+//        verify(claimRepository, times(1)).findAllByCustomerId(customerId);
+//        verify(claimMapper, times(1)).toClaimResponseDTOList(claims);
 //    }
 //}
