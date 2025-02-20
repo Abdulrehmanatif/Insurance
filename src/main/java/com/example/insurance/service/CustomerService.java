@@ -7,8 +7,8 @@ import com.example.insurance.utils.ApiResponse;
 
 public interface CustomerService {
 
-    public CustomerResponse addCustomer(AddCustomerRequest request);
+    public ApiResponse<CustomerResponse> addCustomer(AddCustomerRequest request);
 
-    public CustomerResponse getCustomerInfo(Integer customerId);
+    public ApiResponse<CustomerResponse> getCustomerInfo(Integer customerId);
 
 }

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 @Repository
@@ -19,8 +18,9 @@ public interface ClaimRepository extends JpaRepository<Claim, Integer> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Claim c SET c.claimStatus = :status WHERE c.claimId = :claimId")
-    void updateClaimStatus(@Param("claimId") Integer claimId, @Param("status") Integer status);
+    @Query(value = "UPDATE claim c SET c.claim_status = :status WHERE c.claim_id = :claimId RETURNING *", nativeQuery = true)
+    Claim updateClaimStatus(@Param("claimId") Integer claimId, @Param("status") Integer status);
+
 
     List<Claim> findAllByCustomerId(Integer customerId);
 }

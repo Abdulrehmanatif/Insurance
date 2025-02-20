@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface ClaimService {
 
-    public ClaimResponse addClaim(AddClaimRequest request);
+    public ApiResponse<ClaimResponse> addClaim(AddClaimRequest request);
 
-    public ApiResponse updateClaimStatus(Integer claimId, Integer status);
+    public ApiResponse<ClaimResponse> updateClaimStatus(Integer claimId, Integer status);
 
-    public ApiResponse deleteClaim(Integer claimId);
+    public ApiResponse<?> deleteClaim(Integer claimId);
 
-    public List<ClaimResponse> getAllClaims(Integer customerId);
+    public ApiResponse<List<ClaimResponse>> getAllClaims(Integer customerId);
 
 }

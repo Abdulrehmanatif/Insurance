@@ -7,6 +7,8 @@ import com.example.insurance.exception.CustomerNotFoundException;
 import com.example.insurance.mapper.CustomerMapper;
 import com.example.insurance.repository.CustomerRepository;
 import com.example.insurance.service.CustomerService;
+import com.example.insurance.utils.ApiResponse;
+import com.example.insurance.utils.Constants;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,15 +22,15 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerMapper customerMapper;
 
     @Override
-    public CustomerResponse addCustomer(AddCustomerRequest request) {
+    public ApiResponse<CustomerResponse> addCustomer(AddCustomerRequest request) {
         log.info("Adding new customer: {}", request);
         Customer savedCustomer = customerRepository.save(customerMapper.toCustomerEntity(request));
         log.info("Customer added successfully with ID: {}", savedCustomer.getCustomerId());
-        return customerMapper.toCustomerResponseDTO(savedCustomer);
+        return new ApiResponse<>(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, customerMapper.toCustomerResponseDTO(savedCustomer));
     }
 
     @Override
-    public CustomerResponse getCustomerInfo(Integer customerId) {
+    public ApiResponse<CustomerResponse> getCustomerInfo(Integer customerId) {
         log.info("Fetching customer info for ID: {}", customerId);
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> {
@@ -36,6 +38,6 @@ public class CustomerServiceImpl implements CustomerService {
                     return new CustomerNotFoundException("Customer not Found");
                 });
         log.info("Customer found: {}", customer);
-        return customerMapper.toCustomerResponseDTO(customer);
+        return new ApiResponse<>(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, customerMapper.toCustomerResponseDTO(customer));
     }
 }

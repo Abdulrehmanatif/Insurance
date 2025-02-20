@@ -1,15 +1,13 @@
 package com.example.insurance.utils;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-public class ApiResponse {
+public class ApiResponse<T> {
 
     private Integer status;
     private String message;
-    private Object data;
+    private T data;
 
     public ApiResponse() {
     }
@@ -19,7 +17,7 @@ public class ApiResponse {
         this.message = message;
     }
 
-    public ApiResponse(Integer status, String message, Object data) {
+    public ApiResponse(Integer status, String message, T data) {
         this.status = status;
         this.data = data;
         this.message = message;

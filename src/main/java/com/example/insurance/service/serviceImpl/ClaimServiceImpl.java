@@ -22,31 +22,31 @@ public class ClaimServiceImpl implements ClaimService {
     private final ClaimMapper claimMapper;
 
     @Override
-    public ClaimResponse addClaim(AddClaimRequest request) {
+    public ApiResponse<ClaimResponse> addClaim(AddClaimRequest request) {
         log.info("Adding new claim: {}", request);
         var response = claimMapper.toClaimResponseDTO(claimRepository.save(claimMapper.toClaim(request)));
         log.info("Claim added successfully");
-        return response;
+        return new ApiResponse<>(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, response);
     }
 
     @Override
-    public ApiResponse updateClaimStatus(@NonNull Integer claimId, @NonNull Integer status) {
+    public ApiResponse<ClaimResponse> updateClaimStatus(@NonNull Integer claimId, @NonNull Integer status) {
         log.info("Updating claim status for claimId: {} to status: {}", claimId, status);
-        claimRepository.updateClaimStatus(claimId, status);
+        ClaimResponse response = claimMapper.toClaimResponseDTO(claimRepository.updateClaimStatus(claimId, status));
         log.info("Claim status updated successfully for claimId: {}", claimId);
-        return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE);
+        return new ApiResponse<>(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, response);
     }
 
     @Override
-    public ApiResponse deleteClaim(@NonNull Integer claimId) {
+    public ApiResponse<?> deleteClaim(@NonNull Integer claimId) {
         log.info("Deleting claim with ID: {}", claimId);
         claimRepository.deleteByClaimId(claimId);
         log.info("Claim deleted successfully with ID: {}", claimId);
-        return new ApiResponse(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE);
+        return new ApiResponse<>(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE);
     }
 
     @Override
-    public List<ClaimResponse> getAllClaims(Integer customerId) {
+    public ApiResponse<List<ClaimResponse>> getAllClaims(Integer customerId) {
         log.info("Fetching all claims for customerId: {}", customerId);
         var claims = claimRepository.findAllByCustomerId(customerId);
         if (claims.isEmpty()) {
@@ -54,6 +54,6 @@ public class ClaimServiceImpl implements ClaimService {
             throw new ClaimsNotFoundException("Claims not found");
         }
         log.info("Retrieved {} claims for customerId: {}", claims.size(), customerId);
-        return claimMapper.toClaimResponseDTOList(claims);
+        return new ApiResponse<>(Constants.SUCCESS_CODE, Constants.SUCCESS_MESSAGE, claimMapper.toClaimResponseDTOList(claims));
     }
 }
